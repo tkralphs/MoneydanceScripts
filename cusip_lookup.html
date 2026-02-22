@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CUSIP/Ticker Lookup Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1400px; margin: 20px auto; padding: 20px; }
+        h1 { color: #4F46E5; }
+        textarea { width: 100%; height: 200px; padding: 10px; font-family: monospace; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #4F46E5; color: white; }
+        input { width: 95%; padding: 5px; }
+        button { background: #4F46E5; color: white; padding: 10px 20px; border: none; 
+                 border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #4338CA; }
+        button:disabled { background: #D1D5DB; cursor: not-allowed; }
+        .search-link { color: #4F46E5; text-decoration: none; }
+        .delete-btn { background: #DC2626; }
+        .delete-btn:hover { background: #B91C1C; }
+        .info { background: #EEF2FF; border: 1px solid #4F46E5; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .format-example { background: #DBEAFE; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>CUSIP/Ticker Lookup & Moneydance Import Tool</h1>
+    
+    <div class="info">
+        <h3>Input Format</h3>
+        <p>Each line should have: <strong>TICKER/CUSIP followed by security name</strong></p>
+        <div class="format-example">
+AAPL Apple Inc<br/>
+018522300 ALLETE INC<br/>
+MSFT Microsoft Corporation<br/>
+GOOGL Alphabet Inc
+        </div>
+    </div>
+    
+    <h3>Step 1: Paste Your Securities List</h3>
+    <textarea id="input" placeholder="AAPL Apple Inc
+018522300 ALLETE INC
+MSFT Microsoft Corporation
+GOOGL Alphabet Inc
+..."></textarea>
+    <br>
+    <div id="parseInfo" style="margin: 10px 0; color: #666; font-size: 14px;"></div>
+    <button onclick="prepareTable()">Prepare Lookup Table</button>
+    
+    <div id="tableContainer"></div>
+    
+    <div id="buttons" style="display:none; margin: 20px 0;">
+        <button onclick="addRow()">Add Row</button>
+        <button onclick="downloadCSV()">Download CSV (with Names)</button>
+        <button onclick="downloadMoneydanceScript()">Download Moneydance Script</button>
+    </div>
+
+    <script>
+        let securities = [];
+
+        function prepareTable() {
+            const input = document.getElementById('input').value;
+            securities = [];
+            const seen = new Set();
+            
+            input.split('\n').forEach(line => {
+                line = line.trim();
+                
+                // Skip empty lines and headers
+                if (!line || (line.toLowerCase().includes('cusip') && line.toLowerCase().includes('ticker'))) {
+                    return;
+                }
+                
+                // Split on whitespace - first part is ticker/CUSIP, rest is name
+                const parts = line.split(/\s+/);
+                if (parts.length === 0) return;
+                
+                const identifier = parts[0].trim();
+                const name = parts.slice(1).join(' ').trim();
+                
+                if (identifier && !seen.has(identifier)) {
+                    seen.add(identifier);
+                    const isCUSIP = /^[A-Z0-9]{9}$/.test(identifier);
+                    securities.push({
+                        original: identifier,
+                        cusip: isCUSIP ? identifier : '',
+                        ticker: isCUSIP ? '' : identifier,
+                        name: name,
+                        searchUrl: isCUSIP 
+                            ? `https://requiem.com/cusip-lookup/${identifier}/`
+                            : `https://www.google.com/search?q=${identifier}+stock+CUSIP+number`
+                    });
+                }
+            });
+            
+            const cusipCount = securities.filter(s => s.cusip).length;
+            const tickerCount = securities.filter(s => s.ticker).length;
+            document.getElementById('parseInfo').textContent = 
+                `Parsed ${securities.length} unique securities (${cusipCount} CUSIPs, ${tickerCount} tickers)`;
+            
+            renderTable();
+            document.getElementById('buttons').style.display = 'block';
+        }
+
+        function renderTable() {
+            let html = `
+                <h3>Step 2: Fill in Missing Information</h3>
+                <p>Click search links to look up missing information. Fill in any missing CUSIP or Ticker fields.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Original</th>
+                            <th>CUSIP</th>
+                            <th>Ticker</th>
+                            <th>Name</th>
+                            <th>Search</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            securities.forEach((sec, idx) => {
+                html += `
+                    <tr>
+                        <td>${sec.original}</td>
+                        <td><input type="text" value="${sec.cusip}" onchange="updateField(${idx}, 'cusip', this.value)" placeholder="CUSIP" /></td>
+                        <td><input type="text" value="${sec.ticker}" onchange="updateField(${idx}, 'ticker', this.value)" placeholder="Ticker" /></td>
+                        <td><input type="text" value="${sec.name}" onchange="updateField(${idx}, 'name', this.value)" placeholder="Security name" style="width: 250px;" /></td>
+                        <td><a href="${sec.searchUrl}" target="_blank" class="search-link">Search →</a></td>
+                        <td><button class="delete-btn" onclick="deleteRow(${idx})">Delete</button></td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+
+        function updateField(idx, field, value) {
+            securities[idx][field] = value;
+        }
+
+        function addRow() {
+            securities.push({
+                original: '',
+                cusip: '',
+                ticker: '',
+                name: '',
+                searchUrl: ''
+            });
+            renderTable();
+        }
+
+        function deleteRow(idx) {
+            securities.splice(idx, 1);
+            renderTable();
+            const cusipCount = securities.filter(s => s.cusip).length;
+            const tickerCount = securities.filter(s => s.ticker).length;
+            document.getElementById('parseInfo').textContent = 
+                `Parsed ${securities.length} unique securities (${cusipCount} CUSIPs, ${tickerCount} tickers)`;
+        }
+
+        function downloadCSV() {
+            let csv = 'CUSIP,Ticker Symbol,Name\n';
+            securities.forEach(sec => {
+                csv += `${sec.cusip},"${sec.ticker}","${sec.name}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cusip_ticker_mapping.csv';
+            a.click();
+        }
+
+        function downloadMoneydanceScript() {
+            const securityData = {};
+            securities.forEach(sec => {
+                if (sec.ticker && sec.cusip) {
+                    securityData[sec.ticker] = {
+                        cusip: sec.cusip,
+                        name: sec.name || sec.ticker
+                    };
+                }
+            });
+
+            const entries = Object.entries(securityData).map(([ticker, data]) => 
+                `    "${ticker}": {"cusip": "${data.cusip}", "name": "${data.name}"},`
+            ).join('\n');
+
+            const script = `#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Auto-generated Moneydance CUSIP/Ticker Update Script
+Generated: ${new Date().toLocaleString()}
+Total securities: ${Object.keys(securityData).length}
+"""
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+CREATE_NEW_SECURITIES = True
+DRY_RUN = False
+UPDATE_EXISTING_NAMES = False
+
+# =============================================================================
+# SECURITY DATA
+# =============================================================================
+
+SECURITY_DATA = {
+${entries}
+}
+
+# =============================================================================
+# SCRIPT LOGIC
+# =============================================================================
+
+def find_security_by_ticker(currs, ticker):
+    for curr in currs:
+        if curr.getTickerSymbol() == ticker:
+            return curr
+    return None
+
+def find_security_by_cusip(currs, cusip):
+    for curr in currs:
+        if curr.getIDForScheme("CUSIP") == cusip:
+            return curr
+    return None
+
+def create_new_security(book, ticker, cusip, name):
+    """Create a new security in Moneydance"""
+    try:
+        currs = book.getCurrencies()
+        
+        # Check if already exists
+        existing = currs.getCurrencyByTickerSymbol(ticker)
+        if existing:
+            return existing
+        
+        # Import CurrencyType class
+        from com.infinitekind.moneydance.model import CurrencyType
+        
+        # Create new CurrencyType - pass the CurrencyTable
+        new_security = CurrencyType(currs)
+        
+        # Set all the properties
+        new_security.setName(name)
+        new_security.setTickerSymbol(ticker)
+        new_security.setIDString(ticker)
+        new_security.setDecimalPlaces(4)
+        new_security.setCurrencyType(CurrencyType.Type.SECURITY)
+        
+        # Set the CUSIP
+        new_security.setIDForScheme("CUSIP", cusip)
+        
+        # Add to the currency table
+        currs.addCurrencyType(new_security)
+        
+        return new_security
+            
+    except Exception as e:
+        print("Error creating security: " + str(e))
+        import traceback
+        traceback.print_exc()
+        return None
+
+def main():
+    print("=" * 80)
+    print("Moneydance CUSIP/Ticker/Name Updater")
+    print("=" * 80)
+    print("CREATE_NEW_SECURITIES: " + str(CREATE_NEW_SECURITIES))
+    print("UPDATE_EXISTING_NAMES: " + str(UPDATE_EXISTING_NAMES))
+    print("DRY_RUN: " + str(DRY_RUN))
+    print()
+    
+    try:
+        book = moneydance.getCurrentAccountBook()
+        currs = book.getCurrencies()
+    except NameError:
+        print("ERROR: This script must be run from within Moneydance")
+        return
+    
+    updates_made = 0
+    created = 0
+    errors = 0
+    
+    print("--- Processing Securities ---")
+    for ticker, data in SECURITY_DATA.items():
+        cusip = data['cusip']
+        name = data['name']
+        
+        try:
+            curr = find_security_by_ticker(currs, ticker)
+            
+            if not curr:
+                curr = find_security_by_cusip(currs, cusip)
+            
+            if curr:
+                old_cusip = curr.getIDForScheme("CUSIP")
+                old_ticker = curr.getTickerSymbol()
+                old_name = curr.getName()
+                
+                changes = []
+                
+                if old_cusip != cusip:
+                    if not DRY_RUN:
+                        curr.setIDForScheme("CUSIP", cusip)
+                    changes.append("CUSIP: '" + str(old_cusip) + "' -> '" + str(cusip) + "'")
+                
+                if old_ticker != ticker:
+                    if not DRY_RUN:
+                        curr.setTickerSymbol(ticker)
+                    changes.append("Ticker: '" + str(old_ticker) + "' -> '" + str(ticker) + "'")
+                
+                if UPDATE_EXISTING_NAMES and name and old_name != name:
+                    if not DRY_RUN:
+                        curr.setName(name)
+                    changes.append("Name: '" + str(old_name) + "' -> '" + str(name) + "'")
+                
+                if changes:
+                    status = "[DRY RUN] " if DRY_RUN else ""
+                    print(status + "Updated " + curr.getName() + ": " + ", ".join(changes))
+                    updates_made += 1
+                else:
+                    print("  " + curr.getName() + " (" + ticker + "): Already up to date")
+                    
+            elif CREATE_NEW_SECURITIES:
+                if not DRY_RUN:
+                    new_sec = create_new_security(book, ticker, cusip, name)
+                    if new_sec:
+                        print("Created new security: " + name + " (" + ticker + ") with CUSIP " + cusip)
+                        created += 1
+                    else:
+                        print("Failed to create security: " + ticker)
+                        errors += 1
+                else:
+                    print("[DRY RUN] Would create: " + name + " (" + ticker + ") with CUSIP " + cusip)
+                    created += 1
+            else:
+                print(ticker + ": Not found (set CREATE_NEW_SECURITIES=True)")
+                errors += 1
+                
+        except Exception as e:
+            print(ticker + ": Error - " + str(e))
+            errors += 1
+    
+    print("\\\\n" + "=" * 80)
+    print("SUMMARY")
+    print("=" * 80)
+    print("Securities updated: " + str(updates_made))
+    print("Securities created: " + str(created))
+    print("Errors: " + str(errors))
+    
+    if DRY_RUN:
+        print("\\\\n*** DRY RUN - No changes saved ***")
+        print("Set DRY_RUN = False to apply")
+    elif updates_made > 0 or created > 0:
+        print("\\\\nSaving changes...")
+        book.notifyAccountModified(book.getRootAccount())
+        print("Done!")
+    else:
+        print("\\\\nNo changes made.")
+
+if __name__ == "__main__" or "moneydance" in dir():
+    main()
+`;
+
+            const blob = new Blob([script], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'moneydance_update_cusip.py';
+            a.click();
+        }
+    </script>
+    
+    <div class="info" style="margin-top: 20px;">
+        <h3>Workflow Summary</h3>
+        <ol>
+            <li>Paste securities with format: <code>TICKER/CUSIP Name</code></li>
+            <li>Click "Prepare Lookup Table" to parse the data</li>
+            <li>Use search links to fill in missing CUSIP or Ticker information</li>
+            <li>Download the Moneydance script and run it: Extensions → Python → Run Script</li>
+        </ol>
+    </div>
+    
+    <div class="info" style="margin-top: 20px;">
+        <h3>Script Configuration:</h3>
+        <ul>
+            <li><strong>CREATE_NEW_SECURITIES = True</strong> - Create securities that don't exist</li>
+            <li><strong>UPDATE_EXISTING_NAMES = False</strong> - Update names of existing securities</li>
+            <li><strong>DRY_RUN = False</strong> - Preview changes without saving</li>
+        </ul>
+    </div>
+</body>
+</html>
