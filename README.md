@@ -223,7 +223,7 @@ this recipe should work. A few notes.
   - `InvestTxnType.MISCINC`
 
   (there are others, but these are the ones used in these scripts). 
-- It is important to note that each of `amount`, `shares`, and `price` need to be set, regardless of the
+- It is important to note that each of `amount`, `shares`, and `price` needs to be set, regardless of the
 transaction type. If the transaction is a cash transaction, then `price` is 1 and `shares` is zero.
 In general, the following should be the case.
   - For `BUY` transactions, `shares` should be positive (typically, `price` and `amount` should be also, but not always) 
