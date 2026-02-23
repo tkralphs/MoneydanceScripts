@@ -182,7 +182,7 @@ def findSecurityAcct(account, ticker):
 
 #### Adding transactions
 
-The easiest way to add transactions to an invest account seems to be the following recipe. 
+The easiest way to add transactions to an investment account seems to be the following recipe. 
 ```python
     from com.infinitekind.moneydance.model import AccountUtil, ParentTxn, InvestFields, InvestTxnType
 
