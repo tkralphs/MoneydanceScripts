@@ -48,7 +48,7 @@ The basic workflow is as follows.
 - You should now have a CSV file called something like `History_for_Account_123456789.csv`
 - Run `python csv_to_moneydance.py History_for_Account_123456789.csv import_txns.py 'Account Name'`, where `import_txns.py` is the name that will
   be given to output script and 'Account Name' is the name of the account that transactions should be added to in Moneydance.
-- The output will be a file with the name specified, consisting of two sets of commands, one for validting the securities and the other for adding
+- The output will be a file with the name specified, consisting of two sets of commands, one for validating the securities and the other for adding
   the transactions.
 - Launch Moneydance and open a Developer Console Window (Window => Show Developer Console).
 - Click the "Open Script" button and load the script.
