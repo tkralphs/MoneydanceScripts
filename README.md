@@ -55,7 +55,8 @@ The basic workflow is as follows.
 - Click "Run"
 - If all securities exist in Moneydance already (more on this below), then the transactions should be added.
 - If there are missing (or duplicate) securities, then these issues need to be rectified first before running the script again.
-
+- **Warning**: There is no check for duplicate transactions.
+  
 What follows next is more detailed information and some hard-won lessons learned for those who want to know more about
 various aspects of this. 
 
