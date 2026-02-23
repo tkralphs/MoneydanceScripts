@@ -32,8 +32,8 @@ This process is significatly more involved and there are many gotchas. Note that
 One is to parse a CSV containing transaction data and produce an OFX file (essentially an XML file containing the transaction data), which can then be read
 by Moneydance. The (only lightly tested) Python script called `csv_to_ofx.py` implements this approach. It would probably need a lot of work
 to be bullet-proof because I decided to switch to the second approach, which is to generate a Jython script to add transactions directly using
-the Moneydance API. Producing an OFX file replicates the process that occurs when downloading transaction data directly from Fidelity. This approach has
-advantages, mainly that the import is orders of magnitude faster), However, it also introduces another layer of translation and I found it easier to fine-tune 
+the Moneydance API. Producing an OFX file replicates the process that occurs when downloading transaction data directly from Fidelity and this approach has
+advantages, mainly that the import is orders of magnitude faster. However, it also introduces another layer of translation and I found it easier to fine-tune 
 the whole process by adding the trasactions directly through the API. This means you can use Moneydance-native transaction types and also directly handle
 tricky things like the number of decimal places a security uses (which can vary and is a big gotcha). 
 
@@ -228,6 +228,22 @@ In general, the following should be the case.
   - For `DIVIDEND` and `MISCINC` transactions, `shares` should be zero, `price` should be 1, and `amount` should be positive.
   - For `MISCEXP`, `shares` should be zero, `price` should be 1, and `amount` should be positive
 
+#### Some other gotchas
+
+Two other things I ran into were as follows.
+- There is a limitation on the size of a single function in Jython (inherited from the similar limitation in Java). This necessitates
+  batching the addition of transactions into many smaller functions when there are a lot of transactions. The actual code is quite
+  verbose, since it cannot read in data directly from the CSV when running.
+- All numbers are passed to be Moneydance as integers, so $12.30 is passed as 1230 and Moneydance converts it when displaying
+  and doing computations. For this conversion, Moneydance uses an internally maintained precision that is specific to the subaccount
+  associated with each security. This is set when the security is created and all transaction data has to be scaled appropriately.
+  This is the purpose of the helper function `getShareScale()`.
+  ```python
+  def getShareScale(ticker):
+    try: return 10 ** findSecurity(ticker)[0].getDecimalPlaces()
+    except: return 10000
+  ```
+  
 ### More detailed background information (Fidelity)
 
 Fidelity has a lot of weird stuff in its transaction data and writing a bullet-proof script to automatically interpret it all is
