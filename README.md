@@ -104,7 +104,7 @@ took a lot of trial and error to put together these scripts. Some thing that are
        Note that for some securities, what is listed as the "symbol" could actually be a CUSIP rather than a ticker symbol. The javascript embedded in the HTML
        file will detect whether what is listed is a ticker or a CUSIP.
     1. The resulting table will have blanks for the information about each security that is missing and needs to be looked up, along with a clickable
-       URL to look that information up manually. After clicking on the link, fillout the missing information in the table for each security.
+       URL to look that information up manually. After clicking on the "Search" link, fill out the missing information in the table for each security.
     1. Once the table is full, click on the Download Moneydance Script button to download a file called `moneydance_update_cusip.py`. Run this script in the Developer
        Console in Moneydance and it will create the securities on Moneydance.
     1. These still need to be added to each account in which they will be help as a separate manual step.
