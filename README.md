@@ -93,8 +93,10 @@ took a lot of trial and error to put together these scripts. Some thing that are
     1. that are missing in Moneydance altogether,
     2. that have no subaccount, or
     3. that appear to be duplicated.
-  - For securities that are missing in Moneydance altogether, there is an HTML file called `cusip_lookup.html` that can assist with creating Those securities.
-    To use it, open it in a browser. Then
+  - For securities that are missing in Moneydance altogether, there is an HTML file called `cusip_lookup.html` that can assist with creating those securities.
+    For most securities, what is needed is to look up the CUSIP, which is not listed in the CSV. In some cases, the CUSIP is listed (see discussion later) but
+    not the ticker symbol. The helper HTML file is to get a complete list of all tickers and associated CUSIPs, then create a script for setting these in
+    Moneydance for each security. To use the helper HTML file, open it in a browser. Then
     1. Cut and paste the list of securities that were indicated as missing in the output of the import script into the window
        <img width="1077" height="478" alt="Screenshot 2026-02-22 193419" src="https://github.com/user-attachments/assets/5a4b372d-0a0f-4ac7-9e9e-7d8ee4c01085" />
        and click on the "Prepare Lookup Table" button. Then you should have a table like this.
