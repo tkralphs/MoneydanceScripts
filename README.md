@@ -69,7 +69,7 @@ took a lot of trial and error to put together these scripts. Some thing that are
   - Securities have both a ticker symbol and a "unique identifier" associated with them. In Moneydance, the unique identfies is called the
     "Security ID." In the U.S., the security ID is what is called the CUSIP and is an SEC-registered, unique identification code for all traded securties.
     Ticker symbols are not always reliable for identifying specific securities. In other countries, the system is different.
-  - It can (and does) happen that the CUSIP associated with a security changes, but it's ticker synbol remains the same (due to a merger for example) or also that
+  - It can (and does) happen that the CUSIP associated with a security changes, but it's ticker symbol remains the same (due to a merger for example) or also that
     the ticker symbol changes, while the CUSIP remains the same (companies are allowed to change their ticker synbols if they want). This
     creates a lot of pain in tracking transactions accurately and it helps to be aware of it.
   - It is not too difficult to identify the CUSIP of a given security or to find out the ticker symbol of the security for which you only have the CUSIP, but
