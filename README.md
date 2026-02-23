@@ -262,11 +262,11 @@ downloaded CSV.
 - Sometimes, what is lited in the "Symbol" columns is a CUSIP instead of a ticker symbol. This seems pretty random at first, but it's usually an indicator
   that there has been a change in CUSIP due to a merger or something like that and this is their very obscure way of telling you this.
 - Miscellaneous weird stuff in the `Description` column that you would not expect includes
-  - There are transactions with the description `REINVESTMENT CASH` that are about investing the cah balance in FDRXX, which can essentially be ignored.
-  - There are transactions that have `DISTRIBUTION` in the description that have a non-zero amount listed and so look as though they change the cash balance,
-    but they are in fact distributions of additional shares.
-  - Transactions with the string `MERGER MER PAYOUT` in the description can either have a positive share quantity, which is a change in shares with no cash
-    transacted or have a negative share quantity, which means a decrease in shares and a cash payout.
+  - There are transactions with the description `REINVESTMENT CASH` that are about investing the cash balance in FDRXX, which can essentially be ignored.
+  - There are transactions that have `DISTRIBUTION` in the description that have a non-zero amount listed and look as though they change the cash balance,
+    but they are in fact distributions of additional shares with no cash transacted.
+  - Transactions with the string `MERGER MER PAYOUT` in the description can either have a positive share quantity (which results in an increase in shares with no cash
+    transacted) or have a negative share quantity (which means a decrease in shares and a corresponding cash payout).
   - Transactions with the string `IN LIEU OF FRX SHARE` in the description can have either a positive or a negative cash amount associated with them, although
     you would think it could be only the former.
   - Transactions with the string `TENEDERED TEX PAYOUT` usually don't have an actual cash payout (as you would expect) but instead are a change in shares.
