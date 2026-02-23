@@ -117,7 +117,8 @@ took a lot of trial and error to put together these scripts. Some thing that are
 
 #### Validating securities
 
-To validate securities, we need to first check whether they exist in the global securities list, then verify whether there is an associated subaccount.
+The functions for validating securities are created automatically, so there is no manual work needed for this step, but for completeness, here is a 
+description of how it's done. We first need to check whether the securities exist in the global securities list, then verify whether there is an associated subaccount.
 The following helper functions do the work and are pretty self-explanatory, but with some important explanations in the function descriptions. 
 ```python
 from com.infinitekind.moneydance.model import CurrencyType
