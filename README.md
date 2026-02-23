@@ -79,9 +79,9 @@ took a lot of trial and error to put together these scripts. Some thing that are
 
   - There is a global list of securities in Moneydance across all accounts, which you can look at by going to Tools => Securities in
     the Moneydance menu.
-  - In addition, there is a "subaccount" inside your brokerage account that associated with each security you've traded in that specific
+  - In addition, there is a "subaccount" inside your brokerage account that is associated with each security you've traded in that specific
     account. It is this subaccount that contains the balance for that security in that account. In other words, you may have shares of stock XYZ
-    in two different account, such as in a regular brokerage and in an IRA and these would be two subaccounts, both linked to the same security.
+    in two different account, such as in a regular brokerage and in an IRA, these would be two subaccounts, both linked to the same security.
   - The security must exist in the global list and have an already-existing subaccount before a transaction involving that security can be added
     to a given account.
 
