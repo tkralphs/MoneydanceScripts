@@ -222,22 +222,22 @@ this recipe should work. A few notes.
   - `InvestTxnType.MISCEXP`
   - `InvestTxnType.MISCINC`
 
-  (there are others, but these are the ones used in these scripts). 
+  (there are other transaction types, but these are the basic ones used in these scripts). 
 - It is important to note that each of `amount`, `shares`, and `price` needs to be set, regardless of the
-transaction type. If the transaction is a cash transaction, then `price` is 1 and `shares` is zero.
+transaction type. If the transaction is a cash transaction, then `price` is 1 and `shares` is 0.
 In general, the following should be the case.
   - For `BUY` transactions, `shares` should be positive (typically, `price` and `amount` should be also, but not always) 
   - For `SELL` transactions, `shares` should be negative (typically, `price` and `amount` should be positive, but not always)
-  - For `DIVIDEND` and `MISCINC` transactions, `shares` should be zero, `price` should be 1, and `amount` should be positive.
-  - For `MISCEXP`, `shares` should be zero, `price` should be 1, and `amount` should be positive
+  - For `DIVIDEND` and `MISCINC` transactions, `shares` should be 0, `price` should be 1, and `amount` should be positive.
+  - For `MISCEXP`, `shares` should be 0, `price` should be 1, and `amount` should be negative.
 
 #### Some other gotchas
 
-Two other things I ran into were as follows.
+Two other important gotchas are as follows.
 - There is a limitation on the size of a single function in Jython (inherited from the similar limitation in Java). This necessitates
   batching the addition of transactions into many smaller functions when there are a lot of transactions. The actual code is quite
   verbose, since it cannot read in data directly from the CSV when running.
-- All numbers are passed to be Moneydance as integers, so $12.30 is passed as 1230 and Moneydance converts it when displaying
+- All numbers are passed to Moneydance as integers, so $12.30 is passed as 1230 and Moneydance converts it when displaying
   and doing computations. For this conversion, Moneydance uses an internally maintained precision that is specific to the subaccount
   associated with each security. This is set when the security is created and all transaction data has to be scaled appropriately.
   This is the purpose of the helper function `getShareScale()`.
@@ -246,6 +246,7 @@ Two other things I ran into were as follows.
     try: return 10 ** findSecurity(ticker)[0].getDecimalPlaces()
     except: return 10000
   ```
+ - These scripts run extremely slowly as background processes so expect to wait a while!
   
 ### More detailed background information (Fidelity)
 
