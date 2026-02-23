@@ -30,8 +30,8 @@ The script does not check to see whether the securities exist, but if you first 
 
 This process is significatly more involved and there are many gotchas. Note that there are two (very) different approaches to importing transaction data.
 One is to parse a CSV containing transaction data and produce an OFX file (essentially an XML file containing the transaction data), which can then be read
-by Moneydance. There is a (largely untested) Python script called `csv_to_ofx.py` that takes this approach. It would probably need a lot of work
-to be bulletproof because I decided to switch to the second approach, which is to generate a Jython script to add transactions directly using
+by Moneydance. The (only lightly tested) Python script called `csv_to_ofx.py` implements this approach. It would probably need a lot of work
+to be bullet-proof because I decided to switch to the second approach, which is to generate a Jython script to add transactions directly using
 the Moneydance API. Producing an OFX file replicates the process that occurs when downloading transaction data directly from Fidelity. This approach has
 advantages, mainly that the import is orders of magnitude faster), However, it also introduces another layer of translation and I found it easier to fine-tune 
 the whole process by adding the trasactions directly through the API. This means you can use Moneydance-native transaction types and also directly handle
