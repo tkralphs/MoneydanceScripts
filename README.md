@@ -18,13 +18,13 @@ The script called `import_prices.py` can import price data, as follows.
 
 - You should now have a CSV file called something like `Portfolio_Positions_MMM-DD-YYYY.csv`
 - Run `python import_prices.py Portfolio_Positions_MMM-DD-YYYY.csv`
-- The output will be a file called `set_prices.py` consisting of commands for setting securoity prices in the Moneydance API.
+- The output will be a file called `set_prices.py` consisting of commands for setting security prices in the Moneydance API.
 - Launch Moneydance and open a Developer Console Window (Window => Show Developer Console).
 - Click the "Open Script" button and load the `set_prices.py` script.
 - Click "Run"
 
 The script does not check to see whether the securities exist, but if you first import the transaction data using the 
-`csv_to_moneydance.py` script, this will already be checked there. 
+`csv_to_moneydance.py` script, as described next, this will already be checked there. 
 
 ## Importing Transactions
 
