@@ -61,8 +61,8 @@ various aspects of this.
 
 ### More detailed background information (Moneydance)
 
-The Moneydance API is not very well documented and although there is a good deal with helpful information in the forums, it still
-took a lot of trial and error to put together these scripts. Some thing that are useful to keep in mind.
+Despite the documentation and helpful information in the forums, it still took a lot of trial and error to put together these scripts. 
+What follows are some thing that are useful to keep in mind.
 
 #### Identifying securities in Moneydance
 
