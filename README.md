@@ -110,7 +110,7 @@ took a lot of trial and error to put together these scripts. Some thing that are
     1. These still need to be added to each account in which they will be held as a separate manual step.
 
     Note that it is not strictly necessary to use the CUSIP as the unique identifier. Anything will work, as long as you are not concerned with detecting changes in
-    ticker symbol or tracing multiple different securities with the saem ticker symbol.
+    ticker symbol or tracing multiple different securities with the same ticker symbol. This is probably only necessary if you trade individual stocks.
   - For securities that are in Moneydance but haven't been traded in this account yet (are missing a subsccount), they can be added by going to the account
     in Moneydance and choosing the "Add Security" option in the "Actions" menu on the top right.
   - Finally, for securities where there is a potential duplicate (more than one security with the same ticker symbol), this requires manually sorting out what's going on. 
