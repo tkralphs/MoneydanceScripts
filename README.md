@@ -34,7 +34,7 @@ by Moneydance. The (only lightly tested) Python script called `csv_to_ofx.py` im
 to be bullet-proof because I decided to switch to the second approach, which is to generate a Jython script to add transactions directly using
 the Moneydance API. Producing an OFX file replicates the process that occurs when downloading transaction data directly from Fidelity and this approach has
 advantages, mainly that the import is orders of magnitude faster. However, it also introduces another layer of translation and I found it easier to fine-tune 
-the whole process by adding the trasactions directly through the API. This means you can use Moneydance-native transaction types and also directly handle
+the whole process by adding the transactions directly through the API. This means you can use Moneydance-native transaction types and also directly handle
 tricky things like the number of decimal places a security uses (which can vary and is a big gotcha). 
 
 ### Basic Workflow
